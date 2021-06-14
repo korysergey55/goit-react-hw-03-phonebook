@@ -16,6 +16,20 @@ class App extends Component {
   filter: "",
  };
 
+ componentDidMount() {
+  const items = localStorage.getItem("contacts");
+  if (items) {
+   const parsedContacts = JSON.parse(items);
+   this.setState({ contacts: parsedContacts });
+  }
+ }
+
+ componentDidUpdate(prevProps, prevState) {
+  if (prevState.contacts !== this.state.contacts) {
+   localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
+  }
+ }
+
  submitNewContact = (data) => {
   const newTodo = {
    name: data.name,
@@ -30,19 +44,19 @@ class App extends Component {
  };
 
  findDuplicate = (newContactName) => {
-    if (!newContactName) {
-     alert("The field cannot be empty!");
-     return false;
-    }
+  if (!newContactName) {
+   alert("The field cannot be empty!");
+   return false;
+  }
   const isDublicate = this.state.contacts.some(
    (contact) => contact.name === newContactName
   );
 
   if (isDublicate) {
    alert("This Name already exist!" + newContactName);
-    return false;
+   return false;
   }
-   return true;
+  return true;
  };
 
  handleDelete = (id) => {
@@ -61,7 +75,6 @@ class App extends Component {
   const formattedContacts = this.state.filter.toLowerCase().trim();
   const filteredContacts = this.state.contacts.filter((contact) =>
    contact.name.toLowerCase().includes(formattedContacts)
-   
   );
 
   return (
@@ -74,9 +87,7 @@ class App extends Component {
     </Section>
 
     <Section title={"Contacts"}>
-     <Filter 
-     filter={this.state.filter} 
-     filterContacts={this.filterContacts} />
+     <Filter filter={this.state.filter} filterContacts={this.filterContacts} />
 
      <ContactList
       filteredContacts={filteredContacts}
